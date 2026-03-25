@@ -1,23 +1,25 @@
 ---
 layout: default
-title: Launching Jupyter on TACC
+title: Launching Jupyter on HPC
 ---
 
-# Launching Jupyter Notebook on TACC
+# Launching Jupyter Notebook on HPC
 
-Two ways to run Jupyter on a TACC compute node. Method 1 gives you full control from the command line. Method 2 is a web portal that handles everything for you.
+Two ways to run Jupyter on an HPC compute node. Method 1 gives you full control from the command line. Method 2 is a web portal that handles everything for you.
 
-**Prerequisites:** A TACC account with MFA set up. If you don't have one, see the [MSF Getting Started guide](https://ashleyscruse.github.io/msf-getting-started/).
+> **Currently using TACC systems** (Vista, Lonestar6, Stampede3, Frontera). The concepts apply to any HPC system with Slurm and module environments.
+
+**Prerequisites:** An HPC account with MFA set up. If you don't have one, see the [MSF Getting Started guide](https://ashleyscruse.github.io/msf-getting-started/).
 
 ---
 
 # Method 1: From the Terminal (SSH + idev)
 
-You SSH into TACC, request a compute node, launch Jupyter, and tunnel it back to your laptop's browser.
+You SSH into the HPC system, request a compute node, launch Jupyter, and tunnel it back to your laptop's browser.
 
 ---
 
-## Step 1: SSH into TACC
+## Step 1: SSH into the System
 
 Open a terminal on your laptop:
 
@@ -25,13 +27,13 @@ Open a terminal on your laptop:
 ssh your_username@vista.tacc.utexas.edu
 ```
 
-Enter your TACC password and MFA token when prompted.
+Enter your password and MFA token when prompted.
 
 > Nothing shows on screen when you type your password. That's normal. Just type and press Enter.
 
 **Windows users:** Use PowerShell or [PuTTY](https://www.putty.org/).
 
-> **Other TACC systems:** Replace `vista` with `ls6` (Lonestar6), `stampede3`, or `frontera` depending on your allocation.
+> **Other systems:** Replace `vista` with `ls6` (Lonestar6), `stampede3`, or `frontera` depending on your allocation.
 
 ---
 
@@ -45,7 +47,7 @@ idev -p gh-dev -N 1 -n 1 -t 01:00:00 -A YOUR_ALLOCATION
 
 | Flag | Meaning |
 |------|---------|
-| `-p gh-dev` | Queue name (Grace-Hopper dev queue on Vista) |
+| `-p gh-dev` | Queue name (varies by system — see table below) |
 | `-N 1` | 1 node |
 | `-n 1` | 1 task |
 | `-t 01:00:00` | Time limit (1 hour) |
@@ -105,7 +107,7 @@ Replace `NODE_NAME` with your actual compute node (e.g., `c642-081`).
 
 You'll need to enter your password and MFA token again. After that, the terminal will appear to hang with no output. That's correct -- it's forwarding the connection in the background.
 
-> **What this command does:** It creates a secure tunnel from port 8888 on your laptop to port 8888 on the compute node, going through the TACC login node. This lets your browser talk to Jupyter running on the compute node.
+> **What this command does:** It creates a secure tunnel from port 8888 on your laptop to port 8888 on the compute node, going through the login node. This lets your browser talk to Jupyter running on the compute node.
 
 ---
 
@@ -119,7 +121,7 @@ http://localhost:8888
 
 If prompted for a token, paste the token from Step 3.
 
-You should see JupyterLab or the Jupyter file browser. You're now running Python on a TACC compute node.
+You should see JupyterLab or the Jupyter file browser. You're now running Python on an HPC compute node.
 
 ---
 
@@ -135,15 +137,15 @@ You should see JupyterLab or the Jupyter file browser. You're now running Python
 
 ---
 
-# Method 2: TACC Analysis Portal (TAP)
+# Method 2: Analysis Portal (Web Browser)
 
 Everything happens in your browser. No SSH, no tunnels.
 
 ---
 
-## Step 1: Log into TAP
+## Step 1: Log into the Portal
 
-Go to [tap.tacc.utexas.edu](https://tap.tacc.utexas.edu) and log in with your TACC username, password, and MFA token.
+Go to [tap.tacc.utexas.edu](https://tap.tacc.utexas.edu) and log in with your username, password, and MFA token.
 
 ---
 
@@ -178,11 +180,11 @@ JupyterLab opens in your browser. You're on a compute node. Done.
 
 ## Step 4: When You're Done
 
-Click **End** next to your job on the TAP dashboard, or just close the tab and let the timer run out.
+Click **End** next to your job on the dashboard, or just close the tab and let the timer run out.
 
 ---
 
-# Working with Files on TACC
+# Working with Files
 
 ## Where to Put Your Code
 
@@ -201,7 +203,7 @@ git clone https://github.com/your-repo.git
 
 ## Installing Python Packages
 
-TACC provides Python via modules, but you can install additional packages with `--user`:
+The system provides Python via modules, but you can install additional packages with `--user`:
 
 ```bash
 pip install --user package_name
@@ -215,7 +217,7 @@ These install to `$HOME/.local` and persist between sessions.
 
 **"idev is taking forever"**
 - The queue might be full. Try a shorter time: `-t 00:30:00`
-- Check system status on TAP -- if utilization is 100%, wait or try a different queue
+- Check system status on the portal -- if utilization is 100%, wait or try a different queue
 
 **"SSH tunnel gives 'Name or service not known'"**
 - You typed the node name wrong. Check your idev terminal for the actual node (e.g., `c642-081`)
@@ -246,13 +248,13 @@ These install to `$HOME/.local` and persist between sessions.
 
 | Task | Command |
 |------|---------|
-| SSH into Vista | `ssh user@vista.tacc.utexas.edu` |
+| SSH in | `ssh user@vista.tacc.utexas.edu` |
 | Request a compute node | `idev -p gh-dev -N 1 -n 1 -t 01:00:00 -A ALLOCATION` |
 | Load Python | `module load gcc/13.2.0 && module load python3` |
 | Start Jupyter | `jupyter notebook --ip=0.0.0.0 --no-browser` |
 | SSH tunnel (second terminal) | `ssh -N -L 8888:NODE:8888 user@vista.tacc.utexas.edu` |
 | Open in browser | `http://localhost:8888` |
-| TAP (web portal) | [tap.tacc.utexas.edu](https://tap.tacc.utexas.edu) |
+| Analysis Portal | [tap.tacc.utexas.edu](https://tap.tacc.utexas.edu) |
 | Check your node name | Look at your terminal prompt or run `hostname` |
 | End idev session | `exit` |
 
@@ -260,6 +262,6 @@ These install to `$HOME/.local` and persist between sessions.
 
 # Getting Help
 
-- **TACC Documentation:** [docs.tacc.utexas.edu](https://docs.tacc.utexas.edu/)
-- **TACC Support Ticket:** [portal.tacc.utexas.edu/tacc-consulting](https://portal.tacc.utexas.edu/tacc-consulting)
-- **MSF Questions:** Ashley Scruse -- [ashley.scruse@morehouse.edu](mailto:ashley.scruse@morehouse.edu)
+- **System Documentation:** [docs.tacc.utexas.edu](https://docs.tacc.utexas.edu/)
+- **Support Ticket:** [portal.tacc.utexas.edu/tacc-consulting](https://portal.tacc.utexas.edu/tacc-consulting)
+- **MSF Questions:** [ashley.scruse@morehouse.edu](mailto:ashley.scruse@morehouse.edu)

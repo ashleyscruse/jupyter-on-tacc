@@ -1,5 +1,5 @@
-title: Launching Jupyter on TACC
-description: How to run Jupyter Notebook on TACC compute nodes from the terminal
+title: Launching Jupyter on HPC
+description: How to run Jupyter Notebook on HPC compute nodes from the terminal
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
   - jekyll-remote-theme
